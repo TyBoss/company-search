@@ -1,0 +1,18 @@
+{
+  "name": "company-search",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node ./index"
+  },
+  "dependencies": {
+    "express": "^4.14.0"
+  },
+  "devDependencies": {
+    "chance": "^1.0.4",
+    "mongodb": "^2.2.16"
+  },
+  "description": "## Your Task",
+  "main": "index.js",
+  "author": "TyBoss",
+  "license": "ISC"
+}

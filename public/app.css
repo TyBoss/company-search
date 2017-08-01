@@ -1,0 +1,49 @@
+body {
+  background-color: #D8D5D5;
+}
+
+.company-finder {
+  background-color: #fff;
+  width: 600px;
+  margin: auto;
+  border-radius: 4px;
+}
+
+.list {
+  list-style: none;
+}
+
+.list li {
+  margin: 10px;
+}
+
+.title, .paginator {
+  display: flex;
+}
+
+.title img {
+  display: block;
+  max-height: 50px;
+  max-width: 50px;
+}
+
+.hide {
+  display: none;
+}
+
+.company {
+  display: flex;
+  flex-direction: column;
+}
+
+.paginator {
+  overflow: hidden;
+}
+
+.page {
+  margin: 2px;
+  min-width: 14px;
+  border: 1px solid black;
+  cursor: pointer;
+  padding: 10px;
+}
