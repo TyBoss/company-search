@@ -136,7 +136,7 @@
 
     generatePages (total = 0) {
       const numOfPages = Math.ceil(total / this.limit)
-      const pagedText = `Page ${numOfPages ? this.page + 1 : 0} of ${this.numOfPages}`
+      const pagedText = `Page ${numOfPages ? this.page + 1 : 0} of ${numOfPages}`
 
       this.numOfPages = numOfPages
       this.currentPageElement[0].textContent = pagedText
