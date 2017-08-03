@@ -18,37 +18,68 @@
     }
   }
 
+  class SearchParameters {
+    constructor () {
+      this.element = document.querySelector('.tbx-search')
+      this.categories = document.querySelectorAll('.categories input')
+    }
+
+    getValues () {
+      const query = {}
+      query.q = this.element.value
+      query.laborTypes = Array.prototype.filter
+        .call(this.categories, function (cat) { return cat.checked })
+        .map(function (cat) { return cat.value })
+        .join(',')
+      return query
+    }
+  }
+
   class Search {
     constructor (params) {
       this.query = {
-        name: '',
-        laborTypes: []
+        q: '',
+        laborTypes: ''
       }
       this.timeout = null
       this.paginator = params.paginator
       this.element = document.querySelector('.tbx-search')
       this.element.onkeyup = debounce(this.search.bind(this), 1000)
+      this.categories = document.querySelectorAll('.categories input')
+      this.searchParams = params.searchParams
+      this.onSearch = params.search
+
+      this.bind()
     }
 
-    search (s) {
-      this.query.name = this.element.value
-      this.paginator.page = 0
-      fetchCompanies(0, this.query)
+    bind () {
+      for (let i = 0; i < this.categories.length; i++) {
+        this.categories[i].onclick = this.search.bind(this)
+      }
+    }
+
+    search () {
+      this.onSearch(0, this.searchParams.getValues())
     }
   }
 
   class Paginator {
-    constructor () {
+    constructor (params) {
       this.page = 0
       this.step = 3
       this.limit = 10
       this.numOfPages = 0
 
       this.element = document.querySelector('.paginator')
-      this.searchElement = document.querySelector('.tbx-search')
       this.pages = document.querySelector('.pages')
       this.currentPageElement = document.querySelectorAll('.current-page')
+      this.searchParams = params.searchParams
+      this.onSearch = params.search
 
+      this.setUpQuickNav()
+    }
+
+    setUpQuickNav () {
       const shortcutPager = document.createElement('div')
       shortcutPager.classList.add('shortcut-pager')
 
@@ -77,10 +108,9 @@
 
     onclick (idx) {
       if (idx !== this.page) {
-        const name = this.searchElement.value
         this.page = idx === 0 ? 0 : idx - 1
         const start = this.page * this.limit
-        fetchCompanies(start, { name })
+        this.onSearch(start, this.searchParams.getValues())
       }
     }
 
@@ -106,10 +136,17 @@
 
     generatePages (total = 0) {
       const numOfPages = Math.ceil(total / this.limit)
-      this.numOfPages = numOfPages
+      const pagedText = `Page ${numOfPages ? this.page + 1 : 0} of ${this.numOfPages}`
 
-      this.currentPageElement[0].textContent = `Page ${this.page + 1} of ${this.numOfPages}`
-      this.currentPageElement[1].textContent = `Page ${this.page + 1} of ${this.numOfPages}`
+      this.numOfPages = numOfPages
+      this.currentPageElement[0].textContent = pagedText
+
+      if (numOfPages) {
+        this.currentPageElement[1].textContent = pagedText
+        this.currentPageElement[1].style = 'display: block;'
+      } else {
+        this.currentPageElement[1].style = 'display: none;'
+      }
 
       this.pages.innerHTML = ''
 
@@ -188,9 +225,14 @@
     container.append(list)
   }
 
-  const fetchCompanies = function (start = 0, query) {
+  const fetchCompanies = function (start = 0, query = {}) {
     const xmlHttpRequest = new XMLHttpRequest()
-    const params = '?start=' + start + (query && query.name ? '&q=' + query.name : '')
+    const additionalParams = Object.keys(query)
+      .filter(k => query[k])
+      .map(k => `${k}=${query[k]}`)
+      .join('&')
+
+    const params = `?start=${start}${additionalParams ? '&' + additionalParams : ''}`
 
     xmlHttpRequest.open('GET', 'api/companies' + params)
     xmlHttpRequest.onload = function() {
@@ -209,7 +251,8 @@
     xmlHttpRequest.send()
   }
 
-  const paginator = new Paginator()
-  const search = new Search({ paginator })
+  const searchParams = new SearchParameters()
+  const paginator = new Paginator({ searchParams, search: fetchCompanies })
+  const search = new Search({ paginator, searchParams, search: fetchCompanies })
   fetchCompanies()
 }())

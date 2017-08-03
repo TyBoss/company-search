@@ -84,7 +84,7 @@ body {
   margin-left: 55px;
 }
 
-.tbx-search, .main, .paginator {
+.tbx-search, .main, .paginator, .category-filter {
   margin-left: 12px;
 }
 
@@ -151,6 +151,10 @@ body {
   font-weight: 600;
   text-align: right;
   margin-right: 12px;
+}
+
+.categories {
+  display: inline-block;
 }
 
 @media(max-width: 600px) {
