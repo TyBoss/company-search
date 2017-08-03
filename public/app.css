@@ -4,27 +4,44 @@ body {
 
 .company-finder {
   background-color: #fff;
-  width: 600px;
+  width: 58%;
   margin: auto;
   border-radius: 4px;
 }
 
 .list {
   list-style: none;
+  padding: 0;
 }
 
 .list li {
-  margin: 10px;
+  margin: 12px;
+  border: 1px solid gray;
+  border-radius: 2px;
 }
 
-.title, .paginator {
+.title, .pages, .shortcut-pager {
   display: flex;
+}
+
+.img-container, .company-data {
+  margin: 2px
+}
+
+.company-data {
+  flex: 1;
+}
+
+.img-container {
+  height: 50px;
+  width: 50px;
 }
 
 .title img {
   display: block;
   max-height: 50px;
   max-width: 50px;
+  margin: auto;
 }
 
 .hide {
@@ -36,14 +53,144 @@ body {
   flex-direction: column;
 }
 
-.paginator {
+.pages {
+  align-items: center;
+  height: 50px;
   overflow: hidden;
+  flex-wrap: wrap;
+  margin-left: 10px;
+  margin-right: 10px;
+  justify-content: center;
 }
 
 .page {
-  margin: 2px;
+  margin: 6px;
   min-width: 14px;
   border: 1px solid black;
   cursor: pointer;
   padding: 10px;
+  text-align: center;
+}
+
+.page:hover {
+  border: 1px solid lightblue;
+}
+
+.selected {
+  border: 1px solid blue;
+}
+
+.details {
+  margin-left: 55px;
+}
+
+.tbx-search, .main, .paginator {
+  margin-left: 12px;
+}
+
+.tbx-search {
+  border-radius: 6px;
+  height: 30px;
+  width: 95%;
+  margin-bottom: 10px;
+
+  background-image: url('./images/search.svg');
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  background-position: right;
+}
+
+.main {
+  margin-top: 12px;
+  padding-top: 6px;
+}
+
+.collapsed, .expanded {
+  background-image: url('./images/double-arrow-right.svg');
+  background-repeat: no-repeat;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  background-position: 16px;
+}
+
+.collapsed {
+  transform: rotate(270deg);
+}
+
+.expanded {
+  transform: rotate(90deg)
+}
+
+.toggle {
+  flex: 0;
+  background-color: grey;
+}
+
+.labor-types, .details {
+  font-size: 14px;
+}
+
+.company-name {
+  font-weight: 600;
+  font-family: cursive;
+  font-size: 18px;
+}
+
+.truncation {
+  padding: 6px;
+}
+
+.shortcut-pager {
+  display: none;
+}
+
+.current-page {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+  margin-right: 12px;
+}
+
+@media(max-width: 600px) {
+  .shortcut-pager {
+    display: flex;
+    margin-right: 10px;
+    justify-content: center;
+  }
+
+  .tbx-search {
+    margin-bottom: 6px;
+  }
+
+  .shortcut-pager > div:hover {
+    border: solid 2px red;
+  }
+
+  .next, .last, .previous, .first  {
+    background-repeat: no-repeat;
+    cursor: pointer;
+    height: 40px;
+    width: 40px;
+    background-color: orange;
+    margin: 10px;
+    background-position: center;
+  }
+
+  .next, .previous {
+    background-image: url('./images/play.svg');
+  }
+
+  .first, .last {
+    background-image: url('./images/forward.svg')
+  }
+
+  .previous, .first {
+    transform: rotate(180deg);
+  }
+
+  .pages {
+    display: none;
+  }
 }
