@@ -59,7 +59,7 @@
     }
 
     search () {
-      this.onSearch(0, this.searchParams.getValues())
+      this.onSearch(0, this.searchParams.getValues(), this.paginator.generatePages)
     }
   }
 
@@ -75,6 +75,8 @@
       this.currentPageElement = document.querySelectorAll('.current-page')
       this.searchParams = params.searchParams
       this.onSearch = params.search
+
+      this.generatePages = this.generatePages.bind(this)
 
       this.setUpQuickNav()
     }
@@ -110,7 +112,7 @@
       if (idx !== this.page) {
         this.page = idx === 0 ? 0 : idx - 1
         const start = this.page * this.limit
-        this.onSearch(start, this.searchParams.getValues())
+        this.onSearch(start, this.searchParams.getValues(), this.generatePages)
       }
     }
 
@@ -134,7 +136,7 @@
       }
     }
 
-    generatePages (total = 0) {
+    generatePages ({ total = 0 }) {
       const numOfPages = Math.ceil(total / this.limit)
       const pagedText = `Page ${numOfPages ? this.page + 1 : 0} of ${numOfPages}`
 
@@ -225,8 +227,10 @@
     container.append(list)
   }
 
-  const fetchCompanies = function (start = 0, query = {}) {
+  const fetchCompanies = function (start = 0, query = {}, callback) {
     const xmlHttpRequest = new XMLHttpRequest()
+    fetchCompanies.currentRequest = xmlHttpRequest
+
     const additionalParams = Object.keys(query)
       .filter(k => query[k])
       .map(k => `${k}=${query[k]}`)
@@ -236,16 +240,19 @@
 
     xmlHttpRequest.open('GET', 'api/companies' + params)
     xmlHttpRequest.onload = function() {
-      switch (xmlHttpRequest.status) {
-        case 200:
-          const data = JSON.parse(xmlHttpRequest.response)
-          renderCompanies(xmlHttpRequest.response)
-          paginator.generatePages(data.total)
-          return
-        default:
-          console.log('some error has occured...')
-          return
+      if (xmlHttpRequest === fetchCompanies.currentRequest)
+      {
+        switch (xmlHttpRequest.status) {
+          case 200:
+            const data = JSON.parse(xmlHttpRequest.response)
+            renderCompanies(xmlHttpRequest.response)
+            callback(data)
+            return
+          default:
+            console.log('some error has occured...')
+            return
 
+        }
       }
     }
     xmlHttpRequest.send()
@@ -254,5 +261,5 @@
   const searchParams = new SearchParameters()
   const paginator = new Paginator({ searchParams, search: fetchCompanies })
   const search = new Search({ paginator, searchParams, search: fetchCompanies })
-  fetchCompanies()
+  fetchCompanies(0, {}, paginator.generatePages)
 }())
